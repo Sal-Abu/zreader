@@ -1,0 +1,41 @@
+.document-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.document-card__body {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.document-card__format,
+.document-card__author,
+.document-card__description {
+  margin: 0;
+}
+
+.document-card__format {
+  font-size: 0.875rem;
+  color: #555555;
+}
+
+.document-card__title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.document-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.document-card__actions a {
+  color: #111111;
+  text-decoration: none;
+  font-weight: 600;
+}
