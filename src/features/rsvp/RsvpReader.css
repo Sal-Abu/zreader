@@ -1,0 +1,67 @@
+.rsvp-reader {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 800px;
+}
+
+.rsvp-display {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  padding: 2rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.rsvp-token {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 700;
+  text-align: center;
+  word-break: break-word;
+}
+
+.rsvp-progress {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.rsvp-progress-bar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: #e5e5e5;
+  overflow: hidden;
+}
+
+.rsvp-progress-fill {
+  height: 100%;
+  background: #111111;
+}
+
+.rsvp-progress-text {
+  margin: 0;
+}
+
+.rsvp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.rsvp-controls button {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.rsvp-settings {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.rsvp-settings input {
+  width: 100%;
+}
