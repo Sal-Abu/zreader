@@ -1,5 +1,5 @@
-import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useDocuments } from '../features/documents/DocumentsContext';
 import {
   getSectionByIndex,
@@ -14,21 +14,23 @@ export default function DocumentReadPage() {
 
   const document = getDocument(documentId);
 
-  if (!document) {
-    return (
-      <main>
-        <h1>Document not found</h1>
-        <p>The requested document does not exist.</p>
-      </main>
-    );
-  }
+  const sectionId =
+    searchParams.get('section') ?? document?.normalProgress?.sectionId ?? undefined;
 
-  const sectionId = searchParams.get('section') ?? undefined;
-  const currentSectionIndex = getSectionIndexById(document, sectionId);
-  const currentSection = getSectionByIndex(document, currentSectionIndex);
+  const currentSectionIndex = document
+    ? getSectionIndexById(document, sectionId)
+    : 0;
+
+  const currentSection = document
+    ? getSectionByIndex(document, currentSectionIndex)
+    : undefined;
 
   useEffect(() => {
-    if (!currentSection) {
+    if (!document || !currentSection) {
+      return;
+    }
+
+    if (document.normalProgress?.sectionId === currentSection.id) {
       return;
     }
 
@@ -39,7 +41,16 @@ export default function DocumentReadPage() {
         sectionId: currentSection.id,
       },
     });
-  }, [currentSection?.id]);
+  }, [document, currentSection, updateDocument]);
+
+  if (!document) {
+    return (
+      <main>
+        <h1>Document not found</h1>
+        <p>The requested document does not exist.</p>
+      </main>
+    );
+  }
 
   if (!currentSection) {
     return (

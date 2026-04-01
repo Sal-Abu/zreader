@@ -1,7 +1,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -27,34 +26,32 @@ type DocumentsProviderProps = {
 };
 
 export function DocumentsProvider({ children }: DocumentsProviderProps) {
-  const [documents, setDocuments] = useState<Document[]>([]);
-
-  useEffect(() => {
-    const initialDocuments = initializeDocuments();
-    setDocuments(initialDocuments);
-  }, []);
+  const [documents, setDocuments] = useState<Document[]>(() => initializeDocuments());
 
   function getDocument(documentId: string) {
     return documents.find((document) => document.id === documentId);
   }
 
   function updateDocument(document: Document) {
-  saveDocument(document);
+    saveDocument(document);
 
-  setDocuments((previousDocuments) => {
-    const exists = previousDocuments.some(
-      (previousDocument) => previousDocument.id === document.id,
-    );
+    setDocuments((previousDocuments) => {
+      const exists = previousDocuments.some(
+        (previousDocument) => previousDocument.id === document.id,
+      );
 
-    const nextDocuments = exists
-      ? previousDocuments.map((previousDocument) =>
-          previousDocument.id === document.id ? document : previousDocument,
-        )
-      : [...previousDocuments, document];
+      const nextDocuments = exists
+        ? previousDocuments.map((previousDocument) =>
+            previousDocument.id === document.id ? document : previousDocument,
+          )
+        : [...previousDocuments, document];
 
-    return [...nextDocuments].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-  });
-}
+      return [...nextDocuments].sort((a, b) =>
+        b.updatedAt.localeCompare(a.updatedAt),
+      );
+    });
+  }
+
   function removeDocument(documentId: string) {
     deleteDocument(documentId);
     setDocuments((previousDocuments) =>

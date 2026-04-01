@@ -16,6 +16,14 @@ export default function DocumentDetailPage() {
     );
   }
 
+  const readLink = document.normalProgress?.sectionId
+    ? `/library/${document.id}/read?section=${document.normalProgress.sectionId}`
+    : `/library/${document.id}/read`;
+
+  const speedReadLink = document.speedReadProgress?.sectionId
+    ? `/library/${document.id}/speed-read?scope=section&section=${document.speedReadProgress.sectionId}`
+    : `/library/${document.id}/speed-read?scope=document`;
+
   return (
     <main style={{ display: 'grid', gap: '1.5rem', maxWidth: '800px' }}>
       <section style={{ display: 'grid', gap: '0.5rem' }}>
@@ -41,10 +49,8 @@ export default function DocumentDetailPage() {
       </section>
 
       <section style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-        <Link to={`/library/${document.id}/read`}>Read normally</Link>
-        <Link to={`/library/${document.id}/speed-read?scope=document`}>
-          Speed read full document
-        </Link>
+        <Link to={readLink}>Read normally</Link>
+        <Link to={speedReadLink}>Speed read</Link>
         <Link to="/library">Back to library</Link>
       </section>
     </main>
