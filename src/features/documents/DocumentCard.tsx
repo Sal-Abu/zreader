@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Document } from '../../types/document';
+import { useDocuments } from './DocumentsContext';
 import './DocumentCard.css';
 
 type DocumentCardProps = {
@@ -7,6 +8,8 @@ type DocumentCardProps = {
 };
 
 export default function DocumentCard({ document }: DocumentCardProps) {
+  const { removeDocument } = useDocuments();
+
   const readLink = document.normalProgress?.sectionId
     ? `/library/${document.id}/read?section=${document.normalProgress.sectionId}`
     : `/library/${document.id}/read`;
@@ -14,6 +17,18 @@ export default function DocumentCard({ document }: DocumentCardProps) {
   const speedReadLink = document.speedReadProgress?.sectionId
     ? `/library/${document.id}/speed-read?scope=section&section=${document.speedReadProgress.sectionId}`
     : `/library/${document.id}/speed-read?scope=document`;
+
+  function handleDelete() {
+    const confirmed = window.confirm(
+      `Delete "${document.title}" from your local library?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    removeDocument(document.id);
+  }
 
   return (
     <article className="document-card">
@@ -32,7 +47,11 @@ export default function DocumentCard({ document }: DocumentCardProps) {
         <Link to={`/library/${document.id}`}>Details</Link>
         <Link to={readLink}>Read</Link>
         <Link to={speedReadLink}>Speed Read</Link>
+        <button type="button" onClick={handleDelete}>
+          Delete
+        </button>
       </div>
     </article>
   );
 }
+

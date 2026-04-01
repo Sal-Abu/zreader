@@ -1,0 +1,72 @@
+import { useRef, useState, type ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDocuments } from './DocumentsContext';
+import { importTextDocument } from './importTextDocument';
+
+export default function ImportTextDocumentButton() {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
+  const { addDocument } = useDocuments();
+
+  const [isImporting, setIsImporting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  function handlePickFile() {
+    inputRef.current?.click();
+  }
+
+  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setIsImporting(true);
+    setErrorMessage(null);
+
+    try {
+      if (!file.name.toLowerCase().endsWith('.txt')) {
+        throw new Error('Only .txt files are supported in this phase.');
+      }
+
+      const document = await importTextDocument(file);
+
+      addDocument(document);
+      navigate(`/library/${document.id}`);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to import document.';
+
+      setErrorMessage(message);
+    } finally {
+      setIsImporting(false);
+
+      if (event.target) {
+        event.target.value = '';
+      }
+    }
+  }
+
+  return (
+    <section style={{ display: 'grid', gap: '0.75rem' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <button type="button" onClick={handlePickFile} disabled={isImporting}>
+          {isImporting ? 'Importing...' : 'Import TXT document'}
+        </button>
+      </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".txt,text/plain"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
+      {errorMessage ? (
+        <p style={{ margin: 0, color: '#b00020' }}>{errorMessage}</p>
+      ) : null}
+    </section>
+  );
+}

@@ -14,6 +14,7 @@ import {
 
 type DocumentsContextValue = {
   documents: Document[];
+  addDocument: (document: Document) => void;
   getDocument: (documentId: string) => Document | undefined;
   removeDocument: (documentId: string) => void;
   updateDocument: (document: Document) => void;
@@ -31,6 +32,18 @@ export function DocumentsProvider({ children }: DocumentsProviderProps) {
   function getDocument(documentId: string) {
     return documents.find((document) => document.id === documentId);
   }
+
+  function addDocument(document: Document) {
+    saveDocument(document);
+
+    setDocuments((previousDocuments) => {
+        const nextDocuments = [...previousDocuments, document];
+
+        return [...nextDocuments].sort((a, b) =>
+            b.updatedAt.localeCompare(a.updatedAt),
+         );
+      });
+     }
 
   function updateDocument(document: Document) {
     saveDocument(document);
@@ -62,6 +75,7 @@ export function DocumentsProvider({ children }: DocumentsProviderProps) {
   const value = useMemo(
     () => ({
       documents,
+      addDocument,
       getDocument,
       removeDocument,
       updateDocument,
