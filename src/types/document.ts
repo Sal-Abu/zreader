@@ -6,6 +6,11 @@ export type DocumentSection = {
   text: string;
 };
 
+export type ReadingProgress = {
+  sectionId?: string;
+  tokenIndex?: number;
+};
+
 export type Document = {
   id: string;
   title: string;
@@ -13,4 +18,8 @@ export type Document = {
   format: DocumentFormat;
   description?: string;
   sections: DocumentSection[];
+  createdAt: string;
+  updatedAt: string;
+  normalProgress?: ReadingProgress;
+  speedReadProgress?: ReadingProgress;
 };

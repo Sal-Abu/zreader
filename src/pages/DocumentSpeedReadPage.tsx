@@ -1,11 +1,19 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import RsvpReader from '../features/rsvp/RsvpReader';
-import { getDocumentById } from '../features/documents/mockDocuments';
+import { useDocuments } from '../features/documents/DocumentsContext';
+import {
+  getFullDocumentText,
+  getSectionByIndex,
+  getSectionIndexById,
+} from '../features/documents/documentSelectors';
 import { tokenizeText } from '../features/rsvp/tokenizeText';
 
 export default function DocumentSpeedReadPage() {
   const { documentId = '' } = useParams();
-  const document = getDocumentById(documentId);
+  const [searchParams] = useSearchParams();
+  const { getDocument } = useDocuments();
+
+  const document = getDocument(documentId);
 
   if (!document) {
     return (
@@ -16,8 +24,18 @@ export default function DocumentSpeedReadPage() {
     );
   }
 
-  const fullText = document.sections.map((section) => section.text).join('\n\n');
-  const tokens = tokenizeText(fullText);
+  const scope = searchParams.get('scope') ?? 'document';
+  const sectionId = searchParams.get('section') ?? undefined;
+  const currentSectionIndex = getSectionIndexById(document, sectionId);
+  const currentSection = getSectionByIndex(document, currentSectionIndex);
+
+  const isSectionScope = scope === 'section' && currentSection;
+
+  const sourceText = isSectionScope
+    ? currentSection.text
+    : getFullDocumentText(document);
+
+  const tokens = tokenizeText(sourceText);
 
   return (
     <main style={{ display: 'grid', gap: '2rem' }}>
@@ -27,10 +45,20 @@ export default function DocumentSpeedReadPage() {
         </p>
         <h1 style={{ margin: 0 }}>{document.title}</h1>
         <p style={{ margin: 0 }}>
-          Speed reading view
+          {isSectionScope
+            ? `Speed reading section: ${currentSection?.title ?? 'Unknown section'}`
+            : 'Speed reading full document'}
         </p>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <Link to={`/library/${document.id}/read`}>Read normally</Link>
+          <Link
+            to={
+              isSectionScope && currentSection
+                ? `/library/${document.id}/read?section=${currentSection.id}`
+                : `/library/${document.id}/read`
+            }
+          >
+            Read normally
+          </Link>
           <Link to={`/library/${document.id}`}>Back to details</Link>
         </div>
       </section>

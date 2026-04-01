@@ -1,12 +1,16 @@
 import type { Document } from '../../types/document';
 
-export const mockDocuments: Document[] = [
+const now = new Date().toISOString();
+
+export const seedDocuments: Document[] = [
   {
     id: 'deep-work',
     title: 'Deep Work Notes',
     author: 'Sample Author',
     format: 'txt',
     description: 'A short productivity text used as sample reading material.',
+    createdAt: now,
+    updatedAt: now,
     sections: [
       {
         id: 'deep-work-1',
@@ -28,6 +32,8 @@ has a strong advantage in learning, writing, problem solving, and building usefu
     author: 'Sample Author',
     format: 'epub',
     description: 'A sample document about accelerated reading.',
+    createdAt: now,
+    updatedAt: now,
     sections: [
       {
         id: 'speed-reading-1',
@@ -49,6 +55,8 @@ control over pacing, pauses, chunk size, and navigation so they can adapt the ex
     author: 'Sample Author',
     format: 'pdf',
     description: 'A sample design document for testing library and reading flows.',
+    createdAt: now,
+    updatedAt: now,
     sections: [
       {
         id: 'project-design-1',
@@ -65,7 +73,3 @@ That means the library, document details, reader, and RSVP engine all need a sha
     ],
   },
 ];
-
-export function getDocumentById(documentId: string) {
-  return mockDocuments.find((document) => document.id === documentId);
-}

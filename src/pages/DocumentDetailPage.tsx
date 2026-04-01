@@ -1,9 +1,11 @@
 import { Link, useParams } from 'react-router-dom';
-import { getDocumentById } from '../features/documents/mockDocuments';
+import { useDocuments } from '../features/documents/DocumentsContext';
 
 export default function DocumentDetailPage() {
   const { documentId = '' } = useParams();
-  const document = getDocumentById(documentId);
+  const { getDocument } = useDocuments();
+
+  const document = getDocument(documentId);
 
   if (!document) {
     return (
@@ -29,14 +31,20 @@ export default function DocumentDetailPage() {
         <h2 style={{ margin: 0 }}>Sections</h2>
         <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
           {document.sections.map((section) => (
-            <li key={section.id}>{section.title}</li>
+            <li key={section.id}>
+              <Link to={`/library/${document.id}/read?section=${section.id}`}>
+                {section.title}
+              </Link>
+            </li>
           ))}
         </ul>
       </section>
 
       <section style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <Link to={`/library/${document.id}/read`}>Read normally</Link>
-        <Link to={`/library/${document.id}/speed-read`}>Speed read</Link>
+        <Link to={`/library/${document.id}/speed-read?scope=document`}>
+          Speed read full document
+        </Link>
         <Link to="/library">Back to library</Link>
       </section>
     </main>

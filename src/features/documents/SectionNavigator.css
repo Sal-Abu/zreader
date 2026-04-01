@@ -1,0 +1,25 @@
+.section-navigator {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.section-navigator__status {
+  margin: 0;
+  color: #555555;
+}
+
+.section-navigator__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.section-navigator__actions a {
+  color: #111111;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.section-navigator__disabled {
+  color: #888888;
+}
