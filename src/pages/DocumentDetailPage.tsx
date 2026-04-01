@@ -3,9 +3,17 @@ import { useDocuments } from '../features/documents/DocumentsContext';
 
 export default function DocumentDetailPage() {
   const { documentId = '' } = useParams();
-  const { getDocument } = useDocuments();
+  const { getDocument, isReady } = useDocuments();
 
   const document = getDocument(documentId);
+
+  if (!isReady) {
+    return (
+      <main>
+        <h1>Loading document...</h1>
+      </main>
+    );
+  }
 
   if (!document) {
     return (

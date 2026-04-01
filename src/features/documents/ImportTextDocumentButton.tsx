@@ -32,7 +32,7 @@ export default function ImportTextDocumentButton() {
 
       const document = await importTextDocument(file);
 
-      addDocument(document);
+      await addDocument(document);
       navigate(`/library/${document.id}`);
     } catch (error) {
       const message =
@@ -41,10 +41,7 @@ export default function ImportTextDocumentButton() {
       setErrorMessage(message);
     } finally {
       setIsImporting(false);
-
-      if (event.target) {
-        event.target.value = '';
-      }
+      event.target.value = '';
     }
   }
 

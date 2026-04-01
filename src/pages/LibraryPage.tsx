@@ -3,7 +3,7 @@ import ImportTextDocumentButton from '../features/documents/ImportTextDocumentBu
 import { useDocuments } from '../features/documents/DocumentsContext';
 
 export default function LibraryPage() {
-  const { documents } = useDocuments();
+  const { documents, isReady } = useDocuments();
 
   return (
     <main style={{ display: 'grid', gap: '1.5rem' }}>
@@ -17,7 +17,9 @@ export default function LibraryPage() {
 
       <ImportTextDocumentButton />
 
-      {documents.length === 0 ? (
+      {!isReady ? (
+        <p>Loading library...</p>
+      ) : documents.length === 0 ? (
         <p>Your library is empty.</p>
       ) : (
         <section

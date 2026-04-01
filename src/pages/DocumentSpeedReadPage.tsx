@@ -11,9 +11,29 @@ import { tokenizeText } from '../features/rsvp/tokenizeText';
 export default function DocumentSpeedReadPage() {
   const { documentId = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const { getDocument } = useDocuments();
+  const { getDocument, isReady } = useDocuments();
 
   const document = getDocument(documentId);
+
+  const scope = searchParams.get('scope') ?? 'document';
+  const sectionId =
+    searchParams.get('section') ?? document?.speedReadProgress?.sectionId ?? undefined;
+
+  const currentSectionIndex = document
+    ? getSectionIndexById(document, sectionId)
+    : 0;
+
+  const currentSection = document
+    ? getSectionByIndex(document, currentSectionIndex)
+    : undefined;
+
+  if (!isReady) {
+    return (
+      <main>
+        <h1>Loading document...</h1>
+      </main>
+    );
+  }
 
   if (!document) {
     return (
@@ -23,11 +43,6 @@ export default function DocumentSpeedReadPage() {
       </main>
     );
   }
-
-  const scope = searchParams.get('scope') ?? 'document';
-  const sectionId = searchParams.get('section') ?? undefined;
-  const currentSectionIndex = getSectionIndexById(document, sectionId);
-  const currentSection = getSectionByIndex(document, currentSectionIndex);
 
   const isSectionScope = scope === 'section' && currentSection;
 

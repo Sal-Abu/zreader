@@ -10,7 +10,7 @@ import SectionNavigator from '../features/documents/SectionNavigator';
 export default function DocumentReadPage() {
   const { documentId = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const { getDocument, updateDocument } = useDocuments();
+  const { getDocument, isReady, updateDocument } = useDocuments();
 
   const document = getDocument(documentId);
 
@@ -34,7 +34,7 @@ export default function DocumentReadPage() {
       return;
     }
 
-    updateDocument({
+    void updateDocument({
       ...document,
       updatedAt: new Date().toISOString(),
       normalProgress: {
@@ -42,6 +42,14 @@ export default function DocumentReadPage() {
       },
     });
   }, [document, currentSection, updateDocument]);
+
+  if (!isReady) {
+    return (
+      <main>
+        <h1>Loading document...</h1>
+      </main>
+    );
+  }
 
   if (!document) {
     return (

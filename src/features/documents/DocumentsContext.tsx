@@ -1,23 +1,27 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
 import type { Document } from '../../types/document';
 import {
-  deleteDocument,
-  initializeDocuments,
-  saveDocument,
-} from './documentStorage';
+  deleteDocumentFromDb,
+  getDocumentFromDb,
+  getAllDocumentsFromDb,
+  putDocumentInDb,
+  seedDocumentsInDb,
+} from './documentIndexedDb';
 
 type DocumentsContextValue = {
   documents: Document[];
-  addDocument: (document: Document) => void;
+  addDocument: (document: Document) => Promise<void>;
   getDocument: (documentId: string) => Document | undefined;
-  removeDocument: (documentId: string) => void;
-  updateDocument: (document: Document) => void;
+  isReady: boolean;
+  removeDocument: (documentId: string) => Promise<void>;
+  updateDocument: (document: Document) => Promise<void>;
 };
 
 const DocumentsContext = createContext<DocumentsContextValue | undefined>(undefined);
@@ -26,27 +30,54 @@ type DocumentsProviderProps = {
   children: ReactNode;
 };
 
+function sortDocuments(documents: Document[]) {
+  return [...documents].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
 export function DocumentsProvider({ children }: DocumentsProviderProps) {
-  const [documents, setDocuments] = useState<Document[]>(() => initializeDocuments());
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initialize() {
+      const seededDocuments = await seedDocumentsInDb();
+
+      if (!isMounted) {
+        return;
+      }
+
+      setDocuments(sortDocuments(seededDocuments));
+      setIsReady(true);
+    }
+
+    initialize().catch((error) => {
+      console.error(error);
+      if (isMounted) {
+        setIsReady(true);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   function getDocument(documentId: string) {
     return documents.find((document) => document.id === documentId);
   }
 
-  function addDocument(document: Document) {
-    saveDocument(document);
+  async function addDocument(document: Document) {
+    await putDocumentInDb(document);
 
-    setDocuments((previousDocuments) => {
-        const nextDocuments = [...previousDocuments, document];
+    setDocuments((previousDocuments) =>
+      sortDocuments([...previousDocuments, document]),
+    );
+  }
 
-        return [...nextDocuments].sort((a, b) =>
-            b.updatedAt.localeCompare(a.updatedAt),
-         );
-      });
-     }
-
-  function updateDocument(document: Document) {
-    saveDocument(document);
+  async function updateDocument(document: Document) {
+    await putDocumentInDb(document);
 
     setDocuments((previousDocuments) => {
       const exists = previousDocuments.some(
@@ -59,14 +90,13 @@ export function DocumentsProvider({ children }: DocumentsProviderProps) {
           )
         : [...previousDocuments, document];
 
-      return [...nextDocuments].sort((a, b) =>
-        b.updatedAt.localeCompare(a.updatedAt),
-      );
+      return sortDocuments(nextDocuments);
     });
   }
 
-  function removeDocument(documentId: string) {
-    deleteDocument(documentId);
+  async function removeDocument(documentId: string) {
+    await deleteDocumentFromDb(documentId);
+
     setDocuments((previousDocuments) =>
       previousDocuments.filter((document) => document.id !== documentId),
     );
@@ -77,10 +107,11 @@ export function DocumentsProvider({ children }: DocumentsProviderProps) {
       documents,
       addDocument,
       getDocument,
+      isReady,
       removeDocument,
       updateDocument,
     }),
-    [documents],
+    [documents, isReady],
   );
 
   return (

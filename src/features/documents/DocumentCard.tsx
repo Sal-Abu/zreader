@@ -18,7 +18,7 @@ export default function DocumentCard({ document }: DocumentCardProps) {
     ? `/library/${document.id}/speed-read?scope=section&section=${document.speedReadProgress.sectionId}`
     : `/library/${document.id}/speed-read?scope=document`;
 
-  function handleDelete() {
+  async function handleDelete() {
     const confirmed = window.confirm(
       `Delete "${document.title}" from your local library?`,
     );
@@ -27,7 +27,7 @@ export default function DocumentCard({ document }: DocumentCardProps) {
       return;
     }
 
-    removeDocument(document.id);
+   await removeDocument(document.id);
   }
 
   return (
