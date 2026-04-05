@@ -32,6 +32,24 @@ export default function DocumentDetailPage() {
     ? `/library/${document.id}/speed-read?scope=section&section=${document.speedReadProgress.sectionId}`
     : `/library/${document.id}/speed-read?scope=document`;
 
+  const detailEntries =
+    document.format === 'epub'
+      ? Array.from(
+          new Map(
+            document.sections.map((section) => [
+              section.chapterTitle || section.title,
+              {
+                label: section.chapterTitle || section.title,
+                sectionId: section.id,
+              },
+            ]),
+          ).values(),
+        )
+      : document.sections.map((section) => ({
+          label: section.title,
+          sectionId: section.id,
+        }));
+
   return (
     <main style={{ display: 'grid', gap: '1.5rem', maxWidth: '800px' }}>
       <section style={{ display: 'grid', gap: '0.5rem' }}>
@@ -44,12 +62,14 @@ export default function DocumentDetailPage() {
       </section>
 
       <section style={{ display: 'grid', gap: '0.75rem' }}>
-        <h2 style={{ margin: 0 }}>Sections</h2>
+        <h2 style={{ margin: 0 }}>
+          {document.format === 'epub' ? 'Chapters' : 'Sections'}
+        </h2>
         <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-          {document.sections.map((section) => (
-            <li key={section.id}>
-              <Link to={`/library/${document.id}/read?section=${section.id}`}>
-                {section.title}
+          {detailEntries.map((entry) => (
+            <li key={entry.sectionId}>
+              <Link to={`/library/${document.id}/read?section=${entry.sectionId}`}>
+                {entry.label}
               </Link>
             </li>
           ))}

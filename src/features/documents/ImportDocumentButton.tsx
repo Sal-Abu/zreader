@@ -1,9 +1,10 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDocuments } from './DocumentsContext';
+import { importEpubDocument } from './importEpubDocument';
 import { importTextDocument } from './importTextDocument';
 
-export default function ImportTextDocumentButton() {
+export default function ImportDocumentButton() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const { addDocument } = useDocuments();
@@ -26,11 +27,17 @@ export default function ImportTextDocumentButton() {
     setErrorMessage(null);
 
     try {
-      if (!file.name.toLowerCase().endsWith('.txt')) {
-        throw new Error('Only .txt files are supported in this phase.');
-      }
+      const lowerCaseName = file.name.toLowerCase();
 
-      const document = await importTextDocument(file);
+      let document;
+
+      if (lowerCaseName.endsWith('.txt')) {
+        document = await importTextDocument(file);
+      } else if (lowerCaseName.endsWith('.epub')) {
+        document = await importEpubDocument(file);
+      } else {
+        throw new Error('Only .txt and .epub files are supported right now.');
+      }
 
       await addDocument(document);
       navigate(`/library/${document.id}`);
@@ -49,17 +56,21 @@ export default function ImportTextDocumentButton() {
     <section style={{ display: 'grid', gap: '0.75rem' }}>
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <button type="button" onClick={handlePickFile} disabled={isImporting}>
-          {isImporting ? 'Importing...' : 'Import TXT document'}
+          {isImporting ? 'Importing...' : 'Import document'}
         </button>
       </div>
 
       <input
         ref={inputRef}
         type="file"
-        accept=".txt,text/plain"
+        accept=".txt,.epub,text/plain,application/epub+zip"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
+
+      <p style={{ margin: 0, color: '#555555' }}>
+        Supported formats: TXT, EPUB
+      </p>
 
       {errorMessage ? (
         <p style={{ margin: 0, color: '#b00020' }}>{errorMessage}</p>

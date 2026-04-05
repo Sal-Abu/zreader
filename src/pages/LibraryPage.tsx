@@ -1,5 +1,5 @@
 import DocumentCard from '../features/documents/DocumentCard';
-import ImportTextDocumentButton from '../features/documents/ImportTextDocumentButton';
+import ImportDocumentButton from '../features/documents/ImportDocumentButton';
 import { useDocuments } from '../features/documents/DocumentsContext';
 
 export default function LibraryPage() {
@@ -15,7 +15,7 @@ export default function LibraryPage() {
         </p>
       </section>
 
-      <ImportTextDocumentButton />
+      <ImportDocumentButton />
 
       {!isReady ? (
         <p>Loading library...</p>

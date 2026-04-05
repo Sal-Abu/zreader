@@ -9,8 +9,6 @@ import {
 import type { Document } from '../../types/document';
 import {
   deleteDocumentFromDb,
-  getDocumentFromDb,
-  getAllDocumentsFromDb,
   putDocumentInDb,
   seedDocumentsInDb,
 } from './documentIndexedDb';
@@ -54,6 +52,7 @@ export function DocumentsProvider({ children }: DocumentsProviderProps) {
 
     initialize().catch((error) => {
       console.error(error);
+
       if (isMounted) {
         setIsReady(true);
       }
