@@ -14,7 +14,8 @@
 
 .document-card__format,
 .document-card__author,
-.document-card__description {
+.document-card__description,
+.document-card__progress {
   margin: 0;
 }
 
@@ -26,6 +27,11 @@
 .document-card__title {
   margin: 0;
   font-size: 1.25rem;
+}
+
+.document-card__progress {
+  color: #444444;
+  font-size: 0.95rem;
 }
 
 .document-card__actions {
