@@ -5,6 +5,7 @@ export type DocumentSection = {
   title: string;
   text: string;
   chapterTitle?: string;
+  displayTitle?: string;
 };
 
 export type ReadingProgress = {

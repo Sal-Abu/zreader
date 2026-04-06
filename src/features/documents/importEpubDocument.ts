@@ -167,6 +167,7 @@ export async function importEpubDocument(file: File): Promise<Document> {
             id: `section-${index + 1}`,
             title: entry.title || `Chapter ${index + 1}`,
             chapterTitle: entry.title || `Chapter ${index + 1}`,
+            displayTitle: entry.title || `Chapter ${index + 1}`,
             text: chunks[0].text,
           },
         ];
@@ -176,6 +177,7 @@ export async function importEpubDocument(file: File): Promise<Document> {
         id: `section-${index + 1}-${chunkIndex + 1}`,
         title: `${entry.title || `Chapter ${index + 1}`} (${chunkIndex + 1}/${chunks.length})`,
         chapterTitle: entry.title || `Chapter ${index + 1}`,
+        displayTitle: entry.title || `Chapter ${index + 1}`,
         text: chunk.text,
       }));
     });

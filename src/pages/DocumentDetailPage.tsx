@@ -37,18 +37,37 @@ export default function DocumentDetailPage() {
       ? Array.from(
           new Map(
             document.sections.map((section) => [
-              section.chapterTitle || section.title,
+              section.displayTitle || section.chapterTitle || section.title,
               {
-                label: section.chapterTitle || section.title,
+                label: section.displayTitle || section.chapterTitle || section.title,
                 sectionId: section.id,
               },
             ]),
           ).values(),
         )
-      : document.sections.map((section) => ({
-          label: section.title,
-          sectionId: section.id,
-        }));
+      : document.format === 'pdf'
+        ? Array.from(
+            new Map(
+              document.sections.map((section) => [
+                section.displayTitle || section.title,
+                {
+                  label: section.displayTitle || section.title,
+                  sectionId: section.id,
+                },
+              ]),
+            ).values(),
+          )
+        : document.sections.map((section) => ({
+            label: section.displayTitle || section.title,
+            sectionId: section.id,
+          }));
+
+  const sectionHeading =
+    document.format === 'epub'
+      ? 'Chapters'
+      : document.format === 'pdf'
+        ? 'Sections'
+        : 'Sections';
 
   return (
     <main style={{ display: 'grid', gap: '1.5rem', maxWidth: '800px' }}>
@@ -62,9 +81,7 @@ export default function DocumentDetailPage() {
       </section>
 
       <section style={{ display: 'grid', gap: '0.75rem' }}>
-        <h2 style={{ margin: 0 }}>
-          {document.format === 'epub' ? 'Chapters' : 'Sections'}
-        </h2>
+        <h2 style={{ margin: 0 }}>{sectionHeading}</h2>
         <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
           {detailEntries.map((entry) => (
             <li key={entry.sectionId}>

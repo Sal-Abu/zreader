@@ -1,7 +1,6 @@
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDocuments } from './DocumentsContext';
-import { importEpubDocument } from './importEpubDocument';
 import { importTextDocument } from './importTextDocument';
 
 export default function ImportDocumentButton() {
@@ -34,9 +33,13 @@ export default function ImportDocumentButton() {
       if (lowerCaseName.endsWith('.txt')) {
         document = await importTextDocument(file);
       } else if (lowerCaseName.endsWith('.epub')) {
+        const { importEpubDocument } = await import('./importEpubDocument');
         document = await importEpubDocument(file);
+      } else if (lowerCaseName.endsWith('.pdf')) {
+        const { importPdfDocument } = await import('./importPdfDocument');
+        document = await importPdfDocument(file);
       } else {
-        throw new Error('Only .txt and .epub files are supported right now.');
+        throw new Error('Only .txt, .epub, and .pdf files are supported right now.');
       }
 
       await addDocument(document);
@@ -63,13 +66,13 @@ export default function ImportDocumentButton() {
       <input
         ref={inputRef}
         type="file"
-        accept=".txt,.epub,text/plain,application/epub+zip"
+        accept=".txt,.epub,.pdf,text/plain,application/epub+zip,application/pdf"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
 
       <p style={{ margin: 0, color: '#555555' }}>
-        Supported formats: TXT, EPUB
+        Supported formats: TXT, EPUB, PDF
       </p>
 
       {errorMessage ? (
