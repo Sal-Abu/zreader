@@ -39,6 +39,7 @@ export default function DocumentReadPage() {
       updatedAt: new Date().toISOString(),
       normalProgress: {
         sectionId: currentSection.id,
+        updatedAt: new Date().toISOString(),
       },
     });
   }, [document, currentSection, updateDocument]);
@@ -86,7 +87,11 @@ export default function DocumentReadPage() {
       />
 
       <article style={{ display: 'grid', gap: '0.75rem' }}>
-        <h2 style={{ margin: 0 }}>{currentSection.title}</h2>
+        <h2 style={{ margin: 0 }}>
+          {currentSection.displayTitle ||
+            currentSection.chapterTitle ||
+            currentSection.title}
+        </h2>
         {currentSection.text.split('\n').map((paragraph, index) => (
           <p key={`${currentSection.id}-${index}`} style={{ margin: 0 }}>
             {paragraph}

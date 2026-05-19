@@ -1,15 +1,31 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getTokenDelay } from './getTokenDelay';
 
-export function useRsvp(tokens: string[]) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+type UseRsvpOptions = {
+  initialTokenIndex?: number;
+};
+
+export function useRsvp(tokens: string[], options: UseRsvpOptions = {}) {
+  const { initialTokenIndex = 0 } = options;
+
+  const safeInitialIndex =
+    tokens.length > 0
+      ? Math.min(Math.max(initialTokenIndex, 0), tokens.length - 1)
+      : 0;
+
+  const [currentIndex, setCurrentIndex] = useState(safeInitialIndex);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(300);
 
   useEffect(() => {
-    setCurrentIndex(0);
+    const nextIndex =
+      tokens.length > 0
+        ? Math.min(Math.max(initialTokenIndex, 0), tokens.length - 1)
+        : 0;
+
+    setCurrentIndex(nextIndex);
     setIsPlaying(false);
-  }, [tokens]);
+  }, [tokens, initialTokenIndex]);
 
   useEffect(() => {
     if (!isPlaying || tokens.length === 0) {
@@ -84,6 +100,7 @@ export function useRsvp(tokens: string[]) {
     play,
     progress,
     restart,
+    setCurrentIndex,
     setWpm,
     stepBackward,
     stepForward,

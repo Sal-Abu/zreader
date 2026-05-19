@@ -1,11 +1,20 @@
+import { useEffect } from 'react';
 import { useRsvp } from './useRsvp';
 import './RsvpReader.css';
 
 type RsvpReaderProps = {
   tokens: string[];
+  initialTokenIndex?: number;
+  onProgressChange?: (tokenIndex: number) => void;
+  resumeLabel?: string;
 };
 
-export default function RsvpReader({ tokens }: RsvpReaderProps) {
+export default function RsvpReader({
+  tokens,
+  initialTokenIndex = 0,
+  onProgressChange,
+  resumeLabel,
+}: RsvpReaderProps) {
   const {
     currentIndex,
     currentToken,
@@ -19,10 +28,20 @@ export default function RsvpReader({ tokens }: RsvpReaderProps) {
     stepForward,
     totalTokens,
     wpm,
-  } = useRsvp(tokens);
+  } = useRsvp(tokens, { initialTokenIndex });
+
+  useEffect(() => {
+    if (!onProgressChange) {
+      return;
+    }
+
+    onProgressChange(currentIndex);
+  }, [currentIndex, onProgressChange]);
 
   return (
     <section className="rsvp-reader">
+      {resumeLabel ? <p className="rsvp-resume-label">{resumeLabel}</p> : null}
+
       <div className="rsvp-display">
         <span className="rsvp-token">{currentToken || 'Ready'}</span>
       </div>

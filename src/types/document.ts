@@ -11,6 +11,7 @@ export type DocumentSection = {
 export type ReadingProgress = {
   sectionId?: string;
   tokenIndex?: number;
+  updatedAt?: string;
 };
 
 export type Document = {
